@@ -10,99 +10,134 @@ export const OrderHistoryPage = () => {
   const { orders } = useCart();
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { label: string; className: string }> = {
+    const variants: Record<string, { label: string; bg: string; color: string; border: string }> = {
       pending: {
         label: 'Pending',
-        className: 'bg-[#1E293B] text-[#F5F5F5] border border-[#C9A227]/30',
+        bg: '#FEF3C7',
+        color: '#92400E',
+        border: '#FCD34D',
       },
       preparing: {
         label: 'Preparing',
-        className: 'bg-[#7C5E10] text-white',
+        bg: '#FFF7ED',
+        color: '#C2410C',
+        border: '#FDBA74',
       },
       ready: {
         label: 'Ready',
-        className: 'bg-[#166534] text-white',
+        bg: '#D6E9D0',
+        color: '#1C4A1A',
+        border: '#7EB67A',
       },
       completed: {
         label: 'Completed',
-        className: 'border border-[#C9A227] text-[#C9A227]',
+        bg: '#E8F0E5',
+        color: '#3A6B35',
+        border: '#A8C9A0',
       },
     };
 
     const info = variants[status] || variants.pending;
 
-    return <Badge className={info.className}>{info.label}</Badge>;
+    return (
+      <span
+        className="text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full border"
+        style={{ backgroundColor: info.bg, color: info.color, borderColor: info.border }}
+      >
+        {info.label}
+      </span>
+    );
   };
 
   if (orders.length === 0) {
     return (
-      <div className="min-h-screen bg-[#0F0F0F] text-[#F5F5F5]">
+      <div className="min-h-screen" style={{ backgroundColor: '#F7F3ED', color: '#1C2B1A' }}>
         <Header />
-
         <main className="container mx-auto px-4 py-12">
-
-          <Card className="max-w-md mx-auto text-center py-12 bg-[#151515] border border-[#C9A227]/20">
-
+          <Card
+            className="max-w-md mx-auto text-center py-12 border"
+            style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
+          >
             <CardContent>
-
-              <History className="w-16 h-16 mx-auto mb-4 text-[#C9A227]" />
-
-              <h2 className="text-2xl font-semibold mb-2 text-[#C9A227]">
+              <div
+                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{ backgroundColor: '#D6E9D0' }}
+              >
+                <History className="w-10 h-10" style={{ color: '#3A6B35' }} />
+              </div>
+              <h2
+                className="text-2xl font-bold mb-2"
+                style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+              >
                 No order history
               </h2>
-
-              <p className="text-[#AFAFAF] mb-6">
+              <p className="mb-6" style={{ color: '#6B7F68' }}>
                 You haven't placed any orders yet. Start browsing our menu!
               </p>
-
-              <Button className="bg-gradient-to-r from-[#C9A227] to-[#E6C75A] text-black font-bold">
+              <Button
+                className="font-bold rounded-xl px-8 hover:opacity-90 transition-all"
+                style={{ backgroundColor: '#3A6B35', color: '#F7F3ED' }}
+              >
                 <a href="/">Browse Menu</a>
               </Button>
-
             </CardContent>
-
           </Card>
-
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] text-[#F5F5F5]">
-
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F3ED', color: '#1C2B1A' }}>
       <Header />
 
       <main className="container mx-auto px-4 py-8">
 
-        <div className="flex items-center gap-3 mb-6">
-          <History className="w-8 h-8 text-[#C9A227]" />
-          <h1 className="text-3xl font-bold text-[#C9A227]">
+        {/* Page Title */}
+        <div className="flex items-center gap-3 mb-2">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: '#D6E9D0' }}
+          >
+            <History className="w-5 h-5" style={{ color: '#3A6B35' }} />
+          </div>
+          <h1
+            className="text-4xl font-bold"
+            style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+          >
             Order History
           </h1>
         </div>
+        <div className="w-16 h-[3px] rounded-full mb-8 ml-13" style={{ backgroundColor: '#7EB67A' }} />
 
         <div className="max-w-4xl mx-auto space-y-4">
-
           {orders.map((order, index) => (
-
             <Card
               key={order.id}
-              className="bg-[#151515] border border-[#C9A227]/20 hover:shadow-[0_0_25px_rgba(201,162,39,0.15)] transition-all"
+              className="border transition-all duration-200 hover:shadow-md"
+              style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = '#7EB67A';
+                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(58,107,53,0.12)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = '#C8BAA8';
+                (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+              }}
             >
-
               <CardHeader>
-
                 <div className="flex justify-between items-start">
-
                   <div>
-                    <CardTitle className="text-lg mb-1 text-[#F5F5F5]">
+                    <CardTitle
+                      className="text-lg mb-0.5 font-bold"
+                      style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+                    >
                       Order #{orders.length - index}
                     </CardTitle>
-
-                    <p className="text-sm text-[#AFAFAF]">{order.id}</p>
-
-                    <p className="text-sm text-[#AFAFAF] mt-1">
+                    <p className="text-xs font-mono mb-1" style={{ color: '#6B7F68' }}>
+                      {order.id}
+                    </p>
+                    <p className="text-xs" style={{ color: '#6B7F68' }}>
                       {new Date(order.timestamp).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -111,142 +146,136 @@ export const OrderHistoryPage = () => {
                         minute: '2-digit',
                       })}
                     </p>
-
                   </div>
-
                   {getStatusBadge(order.status)}
-
                 </div>
-
               </CardHeader>
 
               <CardContent>
-
                 {/* Order Items */}
-
                 <div className="space-y-3 mb-4">
-
                   {order.items.map((item) => (
-
-                    <div key={item.id} className="flex gap-3">
-
+                    <div
+                      key={item.id}
+                      className="flex gap-3 p-3 rounded-xl"
+                      style={{ backgroundColor: '#F7F3ED', border: '1px solid #D4CCC0' }}
+                    >
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
                       />
-
                       <div className="flex-1">
-
-                        <h4 className="font-semibold text-[#F5F5F5]">
+                        <h4 className="font-bold text-sm" style={{ color: '#1C2B1A' }}>
                           {item.name}
                         </h4>
-
-                        <p className="text-sm text-[#AFAFAF]">
-                          Quantity: {item.quantity} × ₹{item.price.toFixed(2)}
+                        <p className="text-xs mt-0.5" style={{ color: '#6B7F68' }}>
+                          Qty:{' '}
+                          <span className="font-bold" style={{ color: '#3A6B35' }}>
+                            {item.quantity}
+                          </span>{' '}
+                          × ₹{item.price.toFixed(2)}
                         </p>
-
                       </div>
-
                       <div className="text-right">
-
-                        <p className="font-semibold text-[#F5F5F5]">
+                        <p className="font-bold text-sm" style={{ color: '#1C2B1A' }}>
                           ₹{(item.price * item.quantity).toFixed(2)}
                         </p>
-
                       </div>
-
                     </div>
-
                   ))}
-
                 </div>
 
-                <Separator className="my-4 bg-[#C9A227]/20" />
+                <Separator style={{ backgroundColor: '#C8BAA8' }} className="my-4" />
 
-                {/* Order Summary */}
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-                  <div>
-                    <p className="text-sm text-[#AFAFAF]">Customer</p>
-                    <p className="font-semibold">{order.customerName}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-[#AFAFAF]">Email</p>
-                    <p className="font-semibold text-sm truncate">
-                      {order.customerEmail}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-[#AFAFAF]">Payment</p>
-                    <p className="font-semibold capitalize">
-                      {order.paymentMethod.replace('-', ' ')}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-[#AFAFAF]">Total</p>
-                    <p className="font-bold text-[#C9A227] text-lg">
-                      ₹{order.total.toFixed(2)}
-                    </p>
-                  </div>
-
+                {/* Meta Info */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Customer', value: order.customerName },
+                    { label: 'Email', value: order.customerEmail, truncate: true },
+                    { label: 'Payment', value: order.paymentMethod.replace('-', ' ') },
+                    { label: 'Total', value: `₹${order.total.toFixed(2)}`, highlight: true },
+                  ].map(({ label, value, truncate, highlight }) => (
+                    <div
+                      key={label}
+                      className="p-3 rounded-xl"
+                      style={{ backgroundColor: '#F7F3ED', border: '1px solid #D4CCC0' }}
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: '#6B7F68' }}>
+                        {label}
+                      </p>
+                      <p
+                        className={`font-bold text-sm capitalize ${truncate ? 'truncate' : ''}`}
+                        style={{ color: highlight ? '#3A6B35' : '#1C2B1A', fontSize: highlight ? '16px' : undefined }}
+                      >
+                        {value}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-
               </CardContent>
-
             </Card>
-
           ))}
-
         </div>
 
-
         {/* Summary Card */}
-
-        <Card className="max-w-4xl mx-auto mt-8 bg-[#151515] border border-[#C9A227]/20">
-
+        <Card
+          className="max-w-4xl mx-auto mt-8 border"
+          style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
+        >
           <CardHeader>
-            <CardTitle className="text-[#C9A227]">
+            <CardTitle
+              className="text-xl font-bold"
+              style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+            >
               Summary
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-              <div className="text-center">
-                <Package className="w-8 h-8 mx-auto mb-2 text-[#C9A227]" />
-                <p className="text-2xl font-bold">{orders.length}</p>
-                <p className="text-sm text-[#AFAFAF]">Total Orders</p>
-              </div>
-
-              <div className="text-center">
-                <p className="text-2xl font-bold">
-                  {orders.filter((o) => o.status === 'completed').length}
-                </p>
-                <p className="text-sm text-[#AFAFAF]">Completed</p>
-              </div>
-
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#C9A227]">
-                  ₹{orders.reduce((sum, order) => sum + order.total, 0).toFixed(2)}
-                </p>
-                <p className="text-sm text-[#AFAFAF]">Total Spent</p>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                {
+                  icon: <Package className="w-7 h-7" style={{ color: '#3A6B35' }} />,
+                  value: orders.length,
+                  label: 'Total Orders',
+                  highlight: false,
+                },
+                {
+                  icon: null,
+                  value: orders.filter((o) => o.status === 'completed').length,
+                  label: 'Completed',
+                  highlight: false,
+                },
+                {
+                  icon: null,
+                  value: `₹${orders.reduce((sum, order) => sum + order.total, 0).toFixed(2)}`,
+                  label: 'Total Spent',
+                  highlight: true,
+                },
+              ].map(({ icon, value, label, highlight }, i) => (
+                <div
+                  key={i}
+                  className="text-center p-5 rounded-xl"
+                  style={{ backgroundColor: '#F7F3ED', border: '1px solid #D4CCC0' }}
+                >
+                  {icon && <div className="flex justify-center mb-2">{icon}</div>}
+                  <p
+                    className="text-2xl font-bold mb-1"
+                    style={{ color: highlight ? '#3A6B35' : '#1C2B1A' }}
+                  >
+                    {value}
+                  </p>
+                  <p className="text-sm" style={{ color: '#6B7F68' }}>
+                    {label}
+                  </p>
+                </div>
+              ))}
             </div>
-
           </CardContent>
-
         </Card>
 
       </main>
-
     </div>
   );
 };

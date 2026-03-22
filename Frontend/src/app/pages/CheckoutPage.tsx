@@ -28,30 +28,22 @@ export const CheckoutPage = () => {
   const grandTotal = total + tax;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.name || !formData.email || !formData.phone) {
       toast.error('Please fill in all required fields');
       return;
     }
-
     setIsProcessing(true);
-
     await new Promise((resolve) => setTimeout(resolve, 2000));
-
     const orderId = placeOrder({
       name: formData.name,
       email: formData.email,
       paymentMethod: formData.paymentMethod,
     });
-
     setIsProcessing(false);
     toast.success('Order placed successfully!');
     navigate(`/order-confirmation/${orderId}`);
@@ -69,31 +61,44 @@ export const CheckoutPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] text-[#F5F5F5]">
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F3ED', color: '#1C2B1A' }}>
       <Header />
 
       <main className="container mx-auto px-4 py-8">
 
-        <h1 className="text-3xl font-bold mb-6 text-[#C9A227]">
+        {/* Page Title */}
+        <h1
+          className="text-4xl font-bold mb-2"
+          style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+        >
           Checkout
         </h1>
+        <div className="w-16 h-[3px] rounded-full mb-8" style={{ backgroundColor: '#7EB67A' }} />
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Customer Info */}
+          {/* Left: Customer Info + Payment */}
           <div className="lg:col-span-2 space-y-6">
 
-            <Card className="bg-[#151515] border border-[#C9A227]/20">
+            {/* Customer Information */}
+            <Card
+              className="border shadow-sm"
+              style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
+            >
               <CardHeader>
-                <CardTitle className="text-[#C9A227]">
+                <CardTitle
+                  className="text-xl font-bold"
+                  style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+                >
                   Customer Information
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-5">
 
-                <div>
-                  <Label htmlFor="name" className="text-[#AFAFAF]">
+                {/* Name */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="name" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Full Name *
                   </Label>
                   <Input
@@ -102,13 +107,19 @@ export const CheckoutPage = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="John Doe"
-                    className="bg-[#0F0F0F] border-[#C9A227]/20 text-[#F5F5F5]"
                     required
+                    className="rounded-xl border transition-all duration-200 focus:ring-2"
+                    style={{
+                      backgroundColor: '#F7F3ED',
+                      borderColor: '#C8BAA8',
+                      color: '#1C2B1A',
+                    }}
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="email" className="text-[#AFAFAF]">
+                {/* Email */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Email *
                   </Label>
                   <Input
@@ -118,13 +129,19 @@ export const CheckoutPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="john@example.com"
-                    className="bg-[#0F0F0F] border-[#C9A227]/20 text-[#F5F5F5]"
                     required
+                    className="rounded-xl border transition-all duration-200 focus:ring-2"
+                    style={{
+                      backgroundColor: '#F7F3ED',
+                      borderColor: '#C8BAA8',
+                      color: '#1C2B1A',
+                    }}
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="phone" className="text-[#AFAFAF]">
+                {/* Phone */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Phone Number *
                   </Label>
                   <Input
@@ -134,136 +151,158 @@ export const CheckoutPage = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+91 9876543210"
-                    className="bg-[#0F0F0F] border-[#C9A227]/20 text-[#F5F5F5]"
                     required
+                    className="rounded-xl border transition-all duration-200 focus:ring-2"
+                    style={{
+                      backgroundColor: '#F7F3ED',
+                      borderColor: '#C8BAA8',
+                      color: '#1C2B1A',
+                    }}
                   />
                 </div>
 
               </CardContent>
             </Card>
 
-
-            {/* Payment */}
-            <Card className="bg-[#151515] border border-[#C9A227]/20">
+            {/* Payment Method */}
+            <Card
+              className="border shadow-sm"
+              style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
+            >
               <CardHeader>
-                <CardTitle className="text-[#C9A227]">
+                <CardTitle
+                  className="text-xl font-bold"
+                  style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+                >
                   Payment Method
                 </CardTitle>
               </CardHeader>
 
               <CardContent>
-
                 <RadioGroup
                   value={formData.paymentMethod}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, paymentMethod: value })
-                  }
+                  onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
                 >
-
                   <div className="space-y-3">
-
-                    {paymentMethods.map((method) => (
-
-                      <div
-                        key={method.id}
-                        className="flex items-center space-x-3 border border-[#C9A227]/20 rounded-lg p-4 hover:bg-[#151515] cursor-pointer"
-                      >
-
-                        <RadioGroupItem value={method.id} id={method.id} />
-
-                        <Label
-                          htmlFor={method.id}
-                          className="flex items-center gap-3 cursor-pointer flex-1 text-[#F5F5F5]"
+                    {paymentMethods.map((method) => {
+                      const isSelected = formData.paymentMethod === method.id;
+                      return (
+                        <div
+                          key={method.id}
+                          className="flex items-center space-x-3 rounded-xl p-4 cursor-pointer border transition-all duration-200"
+                          style={{
+                            backgroundColor: isSelected ? '#D6E9D0' : '#F7F3ED',
+                            borderColor: isSelected ? '#7EB67A' : '#C8BAA8',
+                            borderLeftWidth: isSelected ? '4px' : '1px',
+                          }}
+                          onClick={() => setFormData({ ...formData, paymentMethod: method.id })}
                         >
-
-                          <method.icon className="w-5 h-5 text-[#C9A227]" />
-
-                          <span>{method.label}</span>
-
-                        </Label>
-
-                      </div>
-
-                    ))}
-
+                          <RadioGroupItem
+                            value={method.id}
+                            id={method.id}
+                            className="border-[#A8C9A0] text-[#3A6B35]"
+                          />
+                          <Label
+                            htmlFor={method.id}
+                            className="flex items-center gap-3 cursor-pointer flex-1 font-medium"
+                            style={{ color: '#1C2B1A' }}
+                          >
+                            <method.icon
+                              className="w-5 h-5"
+                              style={{ color: isSelected ? '#3A6B35' : '#6B7F68' }}
+                            />
+                            <span>{method.label}</span>
+                          </Label>
+                        </div>
+                      );
+                    })}
                   </div>
-
                 </RadioGroup>
-
               </CardContent>
             </Card>
 
           </div>
 
-
-          {/* Order Summary */}
+          {/* Right: Order Summary */}
           <div className="lg:col-span-1">
-
-            <Card className="sticky top-20 bg-[#151515] border border-[#C9A227]/20">
-
+            <Card
+              className="sticky top-20 border shadow-sm"
+              style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
+            >
               <CardHeader>
-                <CardTitle className="text-[#C9A227]">
+                <CardTitle
+                  className="text-xl font-bold"
+                  style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
+                >
                   Order Summary
                 </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-4">
 
-                <div className="space-y-3 max-h-60 overflow-y-auto">
-
+                {/* Cart Items */}
+                <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                   {cart.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm">
-
-                      <span className="text-[#AFAFAF]">
-                        {item.name} x {item.quantity}
+                    <div
+                      key={item.id}
+                      className="flex justify-between text-sm py-1 border-b last:border-0"
+                      style={{ borderColor: '#C8BAA8' }}
+                    >
+                      <span style={{ color: '#4A5E47' }}>
+                        {item.name}{' '}
+                        <span className="font-bold" style={{ color: '#3A6B35' }}>
+                          x{item.quantity}
+                        </span>
                       </span>
-
-                      <span className="font-semibold text-[#F5F5F5]">
+                      <span className="font-semibold" style={{ color: '#1C2B1A' }}>
                         ₹{(item.price * item.quantity).toFixed(2)}
                       </span>
-
                     </div>
                   ))}
-
                 </div>
 
-                <Separator className="bg-[#C9A227]/20" />
+                <Separator style={{ backgroundColor: '#C8BAA8' }} />
 
-                <div className="flex justify-between">
-                  <span className="text-[#AFAFAF]">Subtotal</span>
-                  <span className="font-semibold">₹{total.toFixed(2)}</span>
+                <div className="flex justify-between text-sm">
+                  <span style={{ color: '#6B7F68' }}>Subtotal</span>
+                  <span className="font-semibold" style={{ color: '#1C2B1A' }}>₹{total.toFixed(2)}</span>
                 </div>
 
-                <div className="flex justify-between">
-                  <span className="text-[#AFAFAF]">Tax (10%)</span>
-                  <span className="font-semibold">₹{tax.toFixed(2)}</span>
+                <div className="flex justify-between text-sm">
+                  <span style={{ color: '#6B7F68' }}>Tax (10%)</span>
+                  <span className="font-semibold" style={{ color: '#1C2B1A' }}>₹{tax.toFixed(2)}</span>
                 </div>
 
-                <Separator className="bg-[#C9A227]/20" />
+                <Separator style={{ backgroundColor: '#C8BAA8' }} />
 
                 <div className="flex justify-between text-lg">
-                  <span className="font-semibold">Total</span>
-                  <span className="font-bold text-[#C9A227]">
+                  <span className="font-bold" style={{ color: '#1C2B1A' }}>Total</span>
+                  <span className="font-bold text-xl" style={{ color: '#3A6B35' }}>
                     ₹{grandTotal.toFixed(2)}
                   </span>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#C9A227] to-[#E6C75A] text-black font-bold"
                   disabled={isProcessing}
+                  className="w-full font-bold rounded-xl py-3 uppercase tracking-wide transition-all duration-200 hover:opacity-90 disabled:opacity-60"
+                  style={{ backgroundColor: '#3A6B35', color: '#F7F3ED' }}
                 >
-                  {isProcessing ? 'Processing...' : 'Place Order'}
+                  {isProcessing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      Processing...
+                    </span>
+                  ) : (
+                    'Place Order'
+                  )}
                 </Button>
 
               </CardContent>
-
             </Card>
-
           </div>
 
         </form>
-
       </main>
     </div>
   );
