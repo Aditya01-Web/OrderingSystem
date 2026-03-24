@@ -1,12 +1,13 @@
 import { Coffee, Menu, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useCart } from '../context/CartContext';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { menuItems, categories } from '../data/menuData';
 import { ScrollArea } from './ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { fetchMenuByTable, categoryMap } from '../services/menuApi';
+import { FoodItem } from '../context/CartContext';
 
 export const Header = () => {
   const { cart } = useCart();
@@ -15,12 +16,38 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [menuItems, setMenuItems] = useState<FoodItem[]>([]);  // ✅ replaces menuData
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  const getCategoryItems = (category: string) => {
-    return menuItems.filter((item) => item.category === category);
-  };
+  // ✅ Fetch menu from API on mount
+  useEffect(() => {
+    const loadMenu = async () => {
+      try {
+        const data = await fetchMenuByTable(1);
+        const mapped: FoodItem[] = data.menu_items
+          .filter((item: any) => item.availability)
+          .map((item: any) => ({
+            id: `api-${item.item_id}`,
+            name: item.item_name,
+            price: parseFloat(item.price),
+            category: categoryMap[item.category_id] ?? 'Other',
+            image: '',
+            description: '',
+          }));
+        setMenuItems(mapped);
+      } catch (err) {
+        console.error('Header menu load failed:', err);
+      }
+    };
+    loadMenu();
+  }, []);
+
+  // ✅ Derived from API data, no hardcoded categories
+  const categories = Array.from(new Set(menuItems.map((item) => item.category)));
+
+  const getCategoryItems = (category: string) =>
+    menuItems.filter((item) => item.category === category);
 
   const handleCategoryClick = (category: string) => {
     setMobileMenuOpen(false);
@@ -44,7 +71,7 @@ export const Header = () => {
   const MenuContent = () => (
     <ScrollArea className="h-[calc(100vh-8rem)] mt-6">
       <Accordion type="multiple" className="w-full space-y-2">
-        {categories.filter((cat) => cat !== 'All').map((category) => {
+        {categories.map((category) => {
           const items = getCategoryItems(category);
           return (
             <AccordionItem
@@ -70,10 +97,7 @@ export const Header = () => {
                       className="flex justify-between items-center py-2.5 px-3 rounded-lg cursor-pointer transition-all duration-200 group"
                       style={
                         selectedItemId === item.id
-                          ? {
-                              backgroundColor: '#D6E9D0',
-                              borderLeft: '3px solid #3A6B35',
-                            }
+                          ? { backgroundColor: '#D6E9D0', borderLeft: '3px solid #3A6B35' }
                           : { borderLeft: '3px solid transparent' }
                       }
                       onMouseEnter={(e) => {
@@ -99,10 +123,7 @@ export const Header = () => {
                       >
                         {item.name}
                       </span>
-                      <span
-                        className="text-sm font-bold"
-                        style={{ color: '#3A6B35' }}
-                      >
+                      <span className="text-sm font-bold" style={{ color: '#3A6B35' }}>
                         ₹{item.price.toFixed(2)}
                       </span>
                     </div>
@@ -135,22 +156,14 @@ export const Header = () => {
             >
               <Coffee className="w-7 h-7" style={{ color: '#F7F3ED' }} />
             </div>
-
             <div className="flex flex-col">
               <span
                 className="text-2xl font-bold tracking-tight"
-                style={{
-                  fontFamily: '"Playfair Display", Georgia, serif',
-                  color: '#1C2B1A',
-                }}
+                style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
               >
-                The Coffee{' '}
-                <span style={{ color: '#3A6B35' }}>Nest</span>
+                The Coffee <span style={{ color: '#3A6B35' }}>Nest</span>
               </span>
-              <span
-                className="text-xs tracking-wider uppercase"
-                style={{ color: '#6B7F68' }}
-              >
+              <span className="text-xs tracking-wider uppercase" style={{ color: '#6B7F68' }}>
                 Scan & Sip
               </span>
             </div>
@@ -172,7 +185,6 @@ export const Header = () => {
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#4A5E47')}
               >
                 {label}
-                {/* Underline hover effect */}
                 <span
                   className="absolute -bottom-1 left-0 w-0 h-[2px] rounded-full transition-all duration-300 group-hover:w-full"
                   style={{ backgroundColor: '#7EB67A' }}
@@ -189,11 +201,7 @@ export const Header = () => {
               variant="outline"
               size="icon"
               className="relative transition-all duration-300 rounded-xl"
-              style={{
-                borderColor: '#A8C9A0',
-                backgroundColor: '#EDE8E0',
-                color: '#3A6B35',
-              }}
+              style={{ borderColor: '#A8C9A0', backgroundColor: '#EDE8E0', color: '#3A6B35' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#3A6B35';
                 (e.currentTarget as HTMLButtonElement).style.color = '#F7F3ED';
@@ -226,11 +234,7 @@ export const Header = () => {
                   variant="outline"
                   size="icon"
                   className="md:hidden rounded-xl transition-all duration-300"
-                  style={{
-                    borderColor: '#A8C9A0',
-                    backgroundColor: '#EDE8E0',
-                    color: '#3A6B35',
-                  }}
+                  style={{ borderColor: '#A8C9A0', backgroundColor: '#EDE8E0', color: '#3A6B35' }}
                   onMouseEnter={(e) => {
                     (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#3A6B35';
                     (e.currentTarget as HTMLButtonElement).style.color = '#F7F3ED';
@@ -243,7 +247,6 @@ export const Header = () => {
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-
               <SheetContent
                 className="border-l"
                 style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8' }}
@@ -251,10 +254,7 @@ export const Header = () => {
                 <SheetHeader>
                   <SheetTitle
                     className="text-xl font-bold"
-                    style={{
-                      fontFamily: '"Playfair Display", Georgia, serif',
-                      color: '#1C2B1A',
-                    }}
+                    style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
                   >
                     Menu Categories
                   </SheetTitle>
@@ -280,7 +280,6 @@ export const Header = () => {
                   Menu
                 </Button>
               </SheetTrigger>
-
               <SheetContent
                 className="w-[400px] border-l"
                 style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8' }}
@@ -288,10 +287,7 @@ export const Header = () => {
                 <SheetHeader>
                   <SheetTitle
                     className="text-xl font-bold"
-                    style={{
-                      fontFamily: '"Playfair Display", Georgia, serif',
-                      color: '#1C2B1A',
-                    }}
+                    style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
                   >
                     Menu Categories
                   </SheetTitle>
