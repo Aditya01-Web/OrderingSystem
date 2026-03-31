@@ -66,7 +66,7 @@ export const getAuthToken = async (): Promise<string> => {
       password: AUTH_PASSWORD,
     }),
   });
-
+  console.log(response);
   if (!response.ok) throw new Error('Failed to fetch auth token');
 
   const data = await response.json();

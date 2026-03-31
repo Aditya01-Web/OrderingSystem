@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { adminLogin } from '../../services/adminApi';
-import { Coffee, Lock, User } from 'lucide-react';
+import { Coffee, Lock, User, Eye, EyeOff } from 'lucide-react'; // ✅ added Eye, EyeOff
 
 export const AdminLoginPage = () => {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ export const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // ✅ added
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +77,7 @@ export const AdminLoginPage = () => {
             </div>
           </div>
 
+          {/* ✅ Password field with eye toggle */}
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: '#1C2B1A' }}>
               Password
@@ -83,18 +85,27 @@ export const AdminLoginPage = () => {
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#6B7F68' }} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
                 required
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border outline-none text-sm"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border outline-none text-sm"
                 style={{
                   borderColor: '#C8BAA8',
                   backgroundColor: '#F7F3ED',
                   color: '#1C2B1A',
                 }}
               />
+              {/* Eye icon button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                style={{ color: '#6B7F68' }}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 

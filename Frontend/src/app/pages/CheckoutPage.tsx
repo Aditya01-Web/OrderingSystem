@@ -12,7 +12,7 @@ import { CreditCard, Wallet, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CheckoutPage = () => {
-  const { cart, getCartTotal, placeOrder } = useCart();
+  const { cart, getCartTotal, placeOrder, orders } = useCart(); // ✅ orders from useCart
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -49,7 +49,8 @@ export const CheckoutPage = () => {
     navigate(`/order-confirmation/${orderId}`);
   };
 
-  if (cart.length === 0) {
+  // ✅ Fixed: only redirect if cart is empty AND no orders exist
+  if (cart.length === 0 && orders.length === 0) {
     navigate('/cart');
     return null;
   }
@@ -66,7 +67,6 @@ export const CheckoutPage = () => {
 
       <main className="container mx-auto px-4 py-8">
 
-        {/* Page Title */}
         <h1
           className="text-4xl font-bold mb-2"
           style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
@@ -81,10 +81,7 @@ export const CheckoutPage = () => {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Customer Information */}
-            <Card
-              className="border shadow-sm"
-              style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
-            >
+            <Card className="border shadow-sm" style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}>
               <CardHeader>
                 <CardTitle
                   className="text-xl font-bold"
@@ -96,7 +93,6 @@ export const CheckoutPage = () => {
 
               <CardContent className="space-y-5">
 
-                {/* Name */}
                 <div className="space-y-1.5">
                   <Label htmlFor="name" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Full Name *
@@ -109,15 +105,10 @@ export const CheckoutPage = () => {
                     placeholder="John Doe"
                     required
                     className="rounded-xl border transition-all duration-200 focus:ring-2"
-                    style={{
-                      backgroundColor: '#F7F3ED',
-                      borderColor: '#C8BAA8',
-                      color: '#1C2B1A',
-                    }}
+                    style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8', color: '#1C2B1A' }}
                   />
                 </div>
 
-                {/* Email */}
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Email *
@@ -131,15 +122,10 @@ export const CheckoutPage = () => {
                     placeholder="john@example.com"
                     required
                     className="rounded-xl border transition-all duration-200 focus:ring-2"
-                    style={{
-                      backgroundColor: '#F7F3ED',
-                      borderColor: '#C8BAA8',
-                      color: '#1C2B1A',
-                    }}
+                    style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8', color: '#1C2B1A' }}
                   />
                 </div>
 
-                {/* Phone */}
                 <div className="space-y-1.5">
                   <Label htmlFor="phone" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Phone Number *
@@ -153,11 +139,7 @@ export const CheckoutPage = () => {
                     placeholder="+91 9876543210"
                     required
                     className="rounded-xl border transition-all duration-200 focus:ring-2"
-                    style={{
-                      backgroundColor: '#F7F3ED',
-                      borderColor: '#C8BAA8',
-                      color: '#1C2B1A',
-                    }}
+                    style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8', color: '#1C2B1A' }}
                   />
                 </div>
 
@@ -165,10 +147,7 @@ export const CheckoutPage = () => {
             </Card>
 
             {/* Payment Method */}
-            <Card
-              className="border shadow-sm"
-              style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}
-            >
+            <Card className="border shadow-sm" style={{ backgroundColor: '#EDE8E0', borderColor: '#C8BAA8' }}>
               <CardHeader>
                 <CardTitle
                   className="text-xl font-bold"
@@ -240,7 +219,6 @@ export const CheckoutPage = () => {
 
               <CardContent className="space-y-4">
 
-                {/* Cart Items */}
                 <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                   {cart.map((item) => (
                     <div

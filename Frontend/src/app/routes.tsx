@@ -9,6 +9,7 @@ import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminMenu } from "./pages/admin/AdminMenu";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
+import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 
 export const router = createBrowserRouter([
   // ── Existing routes ──────────────────────
@@ -50,4 +51,8 @@ export const router = createBrowserRouter([
     path: "/admin/menu",
     element: <ProtectedRoute><AdminMenu /></ProtectedRoute>,
   },
+  {
+  path: '/admin/orders',
+  element: <ProtectedRoute><AdminOrdersPage /></ProtectedRoute>,
+},
 ]);

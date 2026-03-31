@@ -1,6 +1,8 @@
 import { useNavigate, useLocation, Link } from 'react-router';
-import { Coffee, LayoutDashboard, UtensilsCrossed, LogOut } from 'lucide-react';
+
 import { adminLogout } from '../../services/adminApi';
+import { Coffee, LayoutDashboard, UtensilsCrossed, LogOut, ShoppingBag } from 'lucide-react';
+
 
 export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate  = useNavigate();
@@ -12,10 +14,10 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const navItems = [
-    { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/admin/menu',      label: 'Menu',       icon: UtensilsCrossed },
-  ];
-
+  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/admin/menu',      label: 'Menu',       icon: UtensilsCrossed },
+  { to: '/admin/orders',    label: 'Orders',     icon: ShoppingBag },  // ✅ add this
+];
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: '#F7F3ED' }}>
       {/* Sidebar */}
