@@ -2,6 +2,7 @@ import { Coffee, Menu, ShoppingCart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useCart } from '../context/CartContext';
+import { useTable } from '../context/TableContext';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { ScrollArea } from './ui/scroll-area';
@@ -11,6 +12,7 @@ import { FoodItem } from '../context/CartContext';
 
 export const Header = () => {
   const { cart } = useCart();
+  const { currentTableId } = useTable();
   const navigate = useNavigate();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -24,7 +26,7 @@ export const Header = () => {
   useEffect(() => {
     const loadMenu = async () => {
       try {
-        const data = await fetchMenuByTable(1);
+        const data = await fetchMenuByTable(currentTableId);
         const mapped: FoodItem[] = data.menu_items
           .filter((item: any) => item.availability)
           .map((item: any) => ({
@@ -32,7 +34,7 @@ export const Header = () => {
             name: item.item_name,
             price: parseFloat(item.price),
             category: categoryMap[item.category_id] ?? 'Other',
-            image: '',
+            image: item.image_url || '',
             description: '',
           }));
         setMenuItems(mapped);
@@ -41,7 +43,7 @@ export const Header = () => {
       }
     };
     loadMenu();
-  }, []);
+  }, [currentTableId]);
 
   // ✅ Derived from API data, no hardcoded categories
   const categories = Array.from(new Set(menuItems.map((item) => item.category)));

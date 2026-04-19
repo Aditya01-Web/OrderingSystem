@@ -1,7 +1,7 @@
 import { useNavigate, useLocation, Link } from 'react-router';
 
 import { adminLogout } from '../../services/adminApi';
-import { Coffee, LayoutDashboard, UtensilsCrossed, LogOut, ShoppingBag } from 'lucide-react';
+import { Coffee, LayoutDashboard, UtensilsCrossed, LogOut, ShoppingBag, QrCode } from 'lucide-react';
 
 
 export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -16,7 +16,8 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const navItems = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/menu',      label: 'Menu',       icon: UtensilsCrossed },
-  { to: '/admin/orders',    label: 'Orders',     icon: ShoppingBag },  // ✅ add this
+  { to: '/admin/orders',    label: 'Orders',     icon: ShoppingBag },
+  { to: '/admin/tables',    label: 'Tables',     icon: QrCode },
 ];
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: '#F7F3ED' }}>

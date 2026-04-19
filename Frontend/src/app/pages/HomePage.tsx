@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { FoodCard } from '../components/FoodCard';
 import { useCart } from '../context/CartContext';
+import { useTable } from '../context/TableContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Leaf } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -11,6 +12,7 @@ import { FoodItem } from '../context/CartContext';
 
 export const HomePage = () => {
   const { addToCart } = useCart();
+  const { currentTableId } = useTable();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export const HomePage = () => {
       setLoadingMenu(true);
       setMenuError(false);
       try {
-        const data = await fetchMenuByTable(1);
+        const data = await fetchMenuByTable(currentTableId);
         const mapped: FoodItem[] = data.menu_items
           .filter((item: any) => item.availability)
           .map((item: any) => ({
@@ -39,7 +41,7 @@ export const HomePage = () => {
             name: item.item_name,
             price: parseFloat(item.price),
             category: categoryMap[item.category_id] ?? 'Other',
-            image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=300&fit=crop',
+            image: item.image_url || 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=300&fit=crop',
             description: '',
           }));
         setApiMenuItems(mapped);
@@ -51,7 +53,7 @@ export const HomePage = () => {
       }
     };
     loadMenu();
-  }, []);
+  }, [currentTableId]);
 
   useEffect(() => {
     const handleCategorySelect = (event: CustomEvent) => {

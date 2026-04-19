@@ -10,6 +10,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminMenu } from "./pages/admin/AdminMenu";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
+import { AdminTablesPage } from './pages/admin/AdminTablesPage';
 
 export const router = createBrowserRouter([
   // ── Existing routes ──────────────────────
@@ -52,7 +53,60 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute><AdminMenu /></ProtectedRoute>,
   },
   {
-  path: '/admin/orders',
-  element: <ProtectedRoute><AdminOrdersPage /></ProtectedRoute>,
-},
+    path: '/admin/orders',
+    element: <ProtectedRoute><AdminOrdersPage /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/tables',
+    element: <ProtectedRoute><AdminTablesPage /></ProtectedRoute>,
+  },
+
+  {
+    path: "/1",
+    Component: HomePage,
+  },
+  {
+    path: "/2",
+    Component: HomePage,
+  },
+  {
+    path: "/3",
+    Component: HomePage,
+  },
+  {
+    path: "/4",
+    Component: HomePage,
+  },
+  {
+    path: "/5",
+    Component: HomePage,
+  },
+  {
+    path: "/6",
+    Component: HomePage,
+  },
+  {
+    path: "/7",
+    Component: HomePage,
+  },
+  {
+    path: "/8",
+    Component: HomePage,
+  },
+  {
+    path: "/9",
+    Component: HomePage,
+  },
+  {
+    path: "/10",
+    Component: HomePage,
+  },
+  {
+    path: "/11",
+    Component: HomePage,
+  },
+  {
+    path: "/12",
+    Component: HomePage,
+  },
 ]);

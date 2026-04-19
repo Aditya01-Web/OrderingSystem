@@ -78,7 +78,7 @@ export const getAuthToken = async (): Promise<string> => {
 export const fetchMenuByTable = async (tableNumber: number = 1) => {
   const token = await getAuthToken();
 
-  const response = await fetch(`${API_BASE}/api/menu/items/${tableNumber}/`, {
+  const response = await fetch(`${API_BASE}/menu/items/${tableNumber}/`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -86,6 +86,21 @@ export const fetchMenuByTable = async (tableNumber: number = 1) => {
   });
 
   if (!response.ok) throw new Error('Failed to fetch menu from API');
+
+  return response.json();
+};
+
+export const fetchTables = async () => {
+  const token = await getAuthToken();
+
+  const response = await fetch(`${API_BASE}/tables/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) throw new Error('Failed to fetch tables from API');
 
   return response.json();
 };
