@@ -91,8 +91,8 @@ export const OrderConfirmationPage = () => {
               </p>
 
               <p className="text-sm" style={{ color: '#6B7F68' }}>
-                We've sent a confirmation email to{' '}
-                <strong style={{ color: '#4A5E47' }}>{order.customerEmail}</strong>
+                We'll contact you at{' '}
+                <strong style={{ color: '#4A5E47' }}>{order.customerPhone}</strong>
               </p>
             </CardContent>
           </Card>

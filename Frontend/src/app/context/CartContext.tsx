@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createOrder } from '../services/menuApi';
 
 export interface FoodItem {
   id: string;
@@ -20,7 +21,7 @@ export interface Order {
   status: 'pending' | 'preparing' | 'ready' | 'completed';
   timestamp: string;
   customerName: string;
-  customerEmail: string;
+  customerPhone: string;
   paymentMethod: string;
 }
 
@@ -32,11 +33,10 @@ interface CartContextType {
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   getCartTotal: () => number;
-  placeOrder: (customerInfo: {
-    name: string;
-    email: string;
-    paymentMethod: string;
-  }) => string;
+  placeOrder: (
+    customerInfo: { name: string; phone: string; paymentMethod: string },
+    tableId: number
+  ) => Promise<string>;
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
 }
 
@@ -110,33 +110,57 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getCartTotal = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const placeOrder = (customerInfo: {
-    name: string;
-    email: string;
-    paymentMethod: string;
-  }) => {
+  const placeOrder = async (
+    customerInfo: { name: string; phone: string; paymentMethod: string },
+    tableId: number
+  ) => {
+    // Format items for API
+    const itemsForApi = cart.map((item) => {
+      // Extract numerical ID from "api-X" format
+      const numericId = parseInt(item.id.replace('api-', ''), 10);
+      return {
+        item_id: isNaN(numericId) ? 0 : numericId, // Fallback if parsing fails
+        quantity: item.quantity,
+      };
+    });
 
-    const orderId = `ORDER-${Date.now()}`;
-
-    const newOrder: Order = {
-      id: orderId,
-      items: [...cart],
-      total: getCartTotal(),
-      status: 'pending',
-      timestamp: new Date().toISOString(),
-      customerName: customerInfo.name,
-      customerEmail: customerInfo.email,
-      paymentMethod: customerInfo.paymentMethod,
+    const payload = {
+      table_id: tableId,
+      items: itemsForApi,
+      customer_name: customerInfo.name,
+      mobile_no: customerInfo.phone,
+      payment_mode: customerInfo.paymentMethod,
     };
 
-    setOrders(prev => [newOrder, ...prev]);
-    clearCart();
+    try {
+      // Call backend API
+      const response = await createOrder(payload);
+      const newOrderId = response.order_id.toString();
 
-    // simulate order progression
-    setTimeout(() => updateOrderStatus(orderId, 'preparing'), 2000);
-    setTimeout(() => updateOrderStatus(orderId, 'ready'), 5000);
+      // Create local order object for history tracking
+      const newOrder: Order = {
+        id: newOrderId,
+        items: [...cart],
+        total: response.total_amount || getCartTotal(),
+        status: 'pending',
+        timestamp: new Date().toISOString(),
+        customerName: customerInfo.name,
+        customerPhone: customerInfo.phone,
+        paymentMethod: customerInfo.paymentMethod,
+      };
 
-    return orderId;
+      setOrders((prev) => [newOrder, ...prev]);
+      clearCart();
+
+      // Simulate progression locally until a real status endpoint is used
+      setTimeout(() => updateOrderStatus(newOrderId, 'preparing'), 2000);
+      setTimeout(() => updateOrderStatus(newOrderId, 'ready'), 5000);
+
+      return newOrderId;
+    } catch (error) {
+      console.error('Error placing order:', error);
+      throw error;
+    }
   };
 
   const updateOrderStatus = (orderId: string, status: Order['status']) => {

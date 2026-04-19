@@ -104,3 +104,20 @@ export const fetchTables = async () => {
 
   return response.json();
 };
+
+export const createOrder = async (orderData: any) => {
+  const token = await getAuthToken();
+
+  const response = await fetch(`${API_BASE}/order/create/`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(orderData),
+  });
+
+  if (!response.ok) throw new Error('Failed to create order');
+
+  return response.json();
+};

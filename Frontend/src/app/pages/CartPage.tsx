@@ -58,7 +58,7 @@ export const CartPage = () => {
           className="text-4xl font-bold mb-2"
           style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#1C2B1A' }}
         >
-          Shopping Cart
+          Your Bucket
         </h1>
         <div className="w-16 h-[3px] rounded-full mb-8" style={{ backgroundColor: '#7EB67A' }} />
 
@@ -182,7 +182,7 @@ export const CartPage = () => {
                   className="w-full font-bold uppercase tracking-wide hover:opacity-90"
                   style={{ borderColor: '#A8C9A0', color: '#3A6B35' }}
                 >
-                  Continue Shopping
+                  Explore Menu
                 </Button>
               </CardFooter>
             </Card>

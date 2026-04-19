@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext';
+import { useTable } from '../context/TableContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -12,13 +13,13 @@ import { CreditCard, Wallet, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CheckoutPage = () => {
-  const { cart, getCartTotal, placeOrder, orders } = useCart(); // ✅ orders from useCart
+  const { cart, getCartTotal, placeOrder, orders } = useCart();
+  const { currentTableId } = useTable();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     paymentMethod: 'credit-card',
   });
@@ -33,20 +34,25 @@ export const CheckoutPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone) {
+    if (!formData.name || !formData.phone) {
       toast.error('Please fill in all required fields');
       return;
     }
     setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    const orderId = placeOrder({
-      name: formData.name,
-      email: formData.email,
-      paymentMethod: formData.paymentMethod,
-    });
-    setIsProcessing(false);
-    toast.success('Order placed successfully!');
-    navigate(`/order-confirmation/${orderId}`);
+    try {
+      const orderId = await placeOrder({
+        name: formData.name,
+        phone: formData.phone,
+        paymentMethod: formData.paymentMethod,
+      }, currentTableId);
+      
+      toast.success('Order placed successfully!');
+      navigate(`/order-confirmation/${orderId}`);
+    } catch (error) {
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // ✅ Fixed: only redirect if cart is empty AND no orders exist
@@ -109,24 +115,6 @@ export const CheckoutPage = () => {
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
-                    Email *
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="john@example.com"
-                    required
-                    className="rounded-xl border transition-all duration-200 focus:ring-2"
-                    style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8', color: '#1C2B1A' }}
-                  />
-                </div>
-
-                <div className="space-y-1.5">
                   <Label htmlFor="phone" className="text-sm font-semibold" style={{ color: '#4A5E47' }}>
                     Phone Number *
                   </Label>
@@ -141,7 +129,7 @@ export const CheckoutPage = () => {
                     className="rounded-xl border transition-all duration-200 focus:ring-2"
                     style={{ backgroundColor: '#F7F3ED', borderColor: '#C8BAA8', color: '#1C2B1A' }}
                   />
-                </div>
+                
 
               </CardContent>
             </Card>
