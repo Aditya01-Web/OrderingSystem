@@ -29,9 +29,17 @@ export const TableProvider = ({ children }: { children: ReactNode }) => {
   const [currentTableId, setCurrentTableId] = useState<number>(1);
 
   useEffect(() => {
-    // 1. Check for table in URL parameters
+    // 1. Check for table in URL parameters (?table=2)
     const params = new URLSearchParams(window.location.search);
-    const tableParam = params.get('table');
+    let tableParam = params.get('table');
+
+    // 1b. Check for table in URL path (e.g. /2)
+    if (!tableParam) {
+      const match = window.location.pathname.match(/^\/(\d+)\/?$/);
+      if (match) {
+        tableParam = match[1];
+      }
+    }
     
     if (tableParam) {
       const parsed = parseInt(tableParam, 10);

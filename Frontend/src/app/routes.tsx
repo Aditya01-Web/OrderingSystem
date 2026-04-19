@@ -62,51 +62,7 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/1",
-    Component: HomePage,
-  },
-  {
-    path: "/2",
-    Component: HomePage,
-  },
-  {
-    path: "/3",
-    Component: HomePage,
-  },
-  {
-    path: "/4",
-    Component: HomePage,
-  },
-  {
-    path: "/5",
-    Component: HomePage,
-  },
-  {
-    path: "/6",
-    Component: HomePage,
-  },
-  {
-    path: "/7",
-    Component: HomePage,
-  },
-  {
-    path: "/8",
-    Component: HomePage,
-  },
-  {
-    path: "/9",
-    Component: HomePage,
-  },
-  {
-    path: "/10",
-    Component: HomePage,
-  },
-  {
-    path: "/11",
-    Component: HomePage,
-  },
-  {
-    path: "/12",
+    path: "/:tableId",
     Component: HomePage,
   },
 ]);
