@@ -46,6 +46,9 @@ export const FoodCard = ({ item, onAddToCart }: FoodCardProps) => {
 
         {/* Overlay */}
         <div
+
+
+
           className="absolute inset-0"
           style={{
             background: 'linear-gradient(to top, rgba(28,43,26,0.55) 0%, transparent 60%)',

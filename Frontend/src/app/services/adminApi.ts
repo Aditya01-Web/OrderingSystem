@@ -43,3 +43,43 @@ export const fetchAllMenuItems = async () => {
   if (!response.ok) throw new Error('Failed to fetch menu');
   return response.json();
 };
+
+export const fetchOrders = async () => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/orders/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) throw new Error('Failed to fetch orders');
+  return response.json();
+};
+
+export const updateOrderStatus = async (orderId: number | string, status: string) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/order/${orderId}/status/`, {
+    method: 'PATCH', // Changed to PATCH based on backend update
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ order_status: status }),
+  });
+  if (!response.ok) throw new Error('Failed to update order status');
+  return response.json();
+};
+
+export const updateTableStatus = async (tableId: number | string, status: string) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/tables/${tableId}/status/`, {
+    method: 'PATCH', // Changed to PATCH based on backend update
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status: status }),
+  });
+  if (!response.ok) throw new Error('Failed to update table status');
+  return response.json();
+};

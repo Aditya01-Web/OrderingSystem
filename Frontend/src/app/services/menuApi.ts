@@ -90,6 +90,21 @@ export const fetchMenuByTable = async (tableNumber: number = 1) => {
   return response.json();
 };
 
+export const fetchCategoriesByTable = async (tableNumber: number = 1) => {
+  const token = await getAuthToken();
+
+  const response = await fetch(`${API_BASE}/menu/categories/${tableNumber}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) throw new Error('Failed to fetch categories from API');
+
+  return response.json();
+};
+
 export const fetchTables = async () => {
   const token = await getAuthToken();
 

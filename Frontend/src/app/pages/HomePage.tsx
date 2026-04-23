@@ -7,7 +7,7 @@ import { useTable } from '../context/TableContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Leaf } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { fetchMenuByTable, categoryMap } from '../services/menuApi';
+import { fetchMenuByTable, fetchCategoriesByTable } from '../services/menuApi';
 import { FoodItem } from '../context/CartContext';
 
 export const HomePage = () => {
@@ -33,17 +33,34 @@ export const HomePage = () => {
       setLoadingMenu(true);
       setMenuError(false);
       try {
-        const data = await fetchMenuByTable(currentTableId);
-        const mapped: FoodItem[] = data.menu_items
+        const [menuData, categoriesData] = await Promise.all([
+          fetchMenuByTable(currentTableId),
+          fetchCategoriesByTable(currentTableId)
+        ]);
+
+        const dynamicCategoryMap: Record<number, string> = {};
+        const cats = Array.isArray(categoriesData) ? categoriesData : (categoriesData.categories || categoriesData.data || []);
+        cats.forEach((cat: any) => {
+           const catId = cat.category_id ?? cat.id;
+           const catName = cat.name ?? cat.category_name ?? cat.category ?? 'Other';
+           if (catId !== undefined) {
+             dynamicCategoryMap[catId] = catName;
+           }
+        });
+
+        const mapped: FoodItem[] = menuData.menu_items
           .filter((item: any) => item.availability)
           .map((item: any) => ({
             id: `api-${item.item_id}`,
             name: item.item_name,
             price: parseFloat(item.price),
-            category: categoryMap[item.category_id] ?? 'Other',
+            category: dynamicCategoryMap[item.category_id] ?? 'Other',
             image: item.image_url || 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=300&fit=crop',
             description: '',
-          }));
+            _original_item_id: item.item_id
+          }))
+          .sort((a: any, b: any) => a._original_item_id - b._original_item_id);
+
         setApiMenuItems(mapped);
       } catch (err) {
         console.error('API menu load failed:', err);
