@@ -1,10 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { useTable } from '../../context/TableContext';
-import { Download, QrCode } from 'lucide-react';
+import { Download, QrCode, Plus, Trash2, X } from 'lucide-react';
+import { addTable, deleteTable } from '../../services/adminApi';
 
 export const AdminTablesPage = () => {
-  const { tables, loadingTables, errorTables } = useTable();
+  const { tables, loadingTables, errorTables, refreshTables } = useTable();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newTable, setNewTable] = useState({ table_number: '', capacity: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDownload = (base64Data: string, tableName: string) => {
     const a = document.createElement('a');
@@ -13,6 +17,33 @@ export const AdminTablesPage = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  };
+
+  const handleAddTable = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      await addTable({ table_number: Number(newTable.table_number), capacity: Number(newTable.capacity) });
+      await refreshTables();
+      setIsAddModalOpen(false);
+      setNewTable({ table_number: '', capacity: '' });
+    } catch (err) {
+      console.error(err);
+      alert('Failed to add table. It may already exist.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteTable = async (tableId: number) => {
+    if (!window.confirm('Are you sure you want to delete this table?')) return;
+    try {
+      await deleteTable(tableId);
+      await refreshTables();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete table.');
+    }
   };
 
   return (
@@ -27,6 +58,16 @@ export const AdminTablesPage = () => {
               Manage tables and download QR codes for ordering
             </p>
           </div>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors shadow-sm"
+            style={{ backgroundColor: '#3A6B35', color: '#F7F3ED' }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2E5529')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#3A6B35')}
+          >
+            <Plus className="w-5 h-5" />
+            Add New Table
+          </button>
         </div>
 
         {loadingTables ? (
@@ -71,18 +112,27 @@ export const AdminTablesPage = () => {
                         Capacity: {table.capacity} persons
                       </p>
                     </div>
-                    <span
-                      className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-                      style={{
-                        backgroundColor: table.status === 'Free' ? '#E8F0E5' : '#FEF2F2',
-                        color: table.status === 'Free' ? '#3A6B35' : '#DC2626',
-                        border: `1px solid ${table.status === 'Free' ? '#A8C9A0' : '#FECACA'}`
-                      }}
-                    >
-                      {table.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                        style={{
+                          backgroundColor: table.status === 'Free' ? '#E8F0E5' : '#FEF2F2',
+                          color: table.status === 'Free' ? '#3A6B35' : '#DC2626',
+                          border: `1px solid ${table.status === 'Free' ? '#A8C9A0' : '#FECACA'}`
+                        }}
+                      >
+                        {table.status}
+                      </span>
+                      <button
+                        onClick={() => handleDeleteTable(table.table_id)}
+                        className="p-2 rounded-full hover:bg-red-50 text-red-500 transition-colors"
+                        title="Delete Table"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  
+
                   <div className="p-4 rounded-xl mb-4 bg-white shadow-sm border border-gray-100 flex items-center justify-center">
                     <img
                       src={table.qr_code}
@@ -109,6 +159,64 @@ export const AdminTablesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Add Table Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl" style={{ backgroundColor: '#F7F3ED' }}>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold" style={{ color: '#1C2B1A' }}>Add New Table</h2>
+              <button onClick={() => setIsAddModalOpen(false)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+                <X className="w-5 h-5" style={{ color: '#4A5E47' }} />
+              </button>
+            </div>
+            <form onSubmit={handleAddTable} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold mb-1" style={{ color: '#4A5E47' }}>Table Number</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={newTable.table_number}
+                  onChange={(e) => setNewTable({ ...newTable, table_number: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border outline-none bg-white"
+                  style={{ borderColor: '#C8BAA8', color: '#1C2B1A' }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-1" style={{ color: '#4A5E47' }}>Capacity (Persons)</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={newTable.capacity}
+                  onChange={(e) => setNewTable({ ...newTable, capacity: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border outline-none bg-white"
+                  style={{ borderColor: '#C8BAA8', color: '#1C2B1A' }}
+                />
+              </div>
+              <div className="pt-4 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-6 py-2 rounded-xl font-bold border"
+                  style={{ borderColor: '#C8BAA8', color: '#4A5E47' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-6 py-2 rounded-xl font-bold transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: '#3A6B35', color: '#F7F3ED' }}
+                >
+                  {isSubmitting ? 'Adding...' : 'Add Table'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 };

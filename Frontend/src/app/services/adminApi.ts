@@ -83,3 +83,80 @@ export const updateTableStatus = async (tableId: number | string, status: string
   if (!response.ok) throw new Error('Failed to update table status');
   return response.json();
 };
+
+export const addMenuItem = async (data: { item_name: string, price: string | number, category_id: number, availability: boolean, image_url: string }) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/menu/items/create/`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to add menu item');
+  return response.json();
+};
+
+export const updateMenuItem = async (itemId: number | string, data: any) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/menu/items/${itemId}/`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to update menu item');
+  return response.json();
+};
+
+export const deleteMenuItem = async (itemId: number | string) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/menu/items/${itemId}/`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Failed to delete menu item');
+  // DELETE might not return JSON, handle it safely
+  if (response.status === 204) return { success: true };
+  try {
+    return await response.json();
+  } catch {
+    return { success: true };
+  }
+};
+
+export const addTable = async (data: { table_number: number, capacity: number }) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/tables/create/`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to add table');
+  return response.json();
+};
+
+export const deleteTable = async (tableId: number | string) => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/tables/${tableId}/`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Failed to delete table');
+  if (response.status === 204) return { success: true };
+  try {
+    return await response.json();
+  } catch {
+    return { success: true };
+  }
+};

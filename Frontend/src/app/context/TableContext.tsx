@@ -17,6 +17,7 @@ interface TableContextType {
   currentTableId: number;
   setCurrentTableId: (id: number) => void;
   getTableByNumber: (tableNumber: number) => TableInfo | undefined;
+  refreshTables: () => Promise<void>;
 }
 
 const TableContext = createContext<TableContextType | undefined>(undefined);
@@ -56,30 +57,34 @@ export const TableProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const loadTables = async () => {
+    try {
+      setLoadingTables(true);
+      setErrorTables(false);
+      const data = await fetchTables();
+      setTables(data);
+    } catch (err) {
+      console.error('Failed to load tables:', err);
+      setErrorTables(true);
+    } finally {
+      setLoadingTables(false);
+    }
+  };
+
   useEffect(() => {
-    const loadTables = async () => {
-      try {
-        setLoadingTables(true);
-        // Ensure error state is reset
-        setErrorTables(false);
-        const data = await fetchTables();
-        setTables(data);
-      } catch (err) {
-        console.error('Failed to load tables:', err);
-        setErrorTables(true);
-      } finally {
-        setLoadingTables(false);
-      }
-    };
     loadTables();
   }, []);
+
+  const refreshTables = async () => {
+    await loadTables();
+  };
 
   const getTableByNumber = (tableNumber: number) => {
     return tables.find((t) => t.table_number === tableNumber);
   };
 
   return (
-    <TableContext.Provider value={{ tables, loadingTables, errorTables, currentTableId, setCurrentTableId, getTableByNumber }}>
+    <TableContext.Provider value={{ tables, loadingTables, errorTables, currentTableId, setCurrentTableId, getTableByNumber, refreshTables }}>
       {children}
     </TableContext.Provider>
   );
