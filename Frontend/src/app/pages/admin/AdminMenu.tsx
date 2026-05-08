@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { fetchAllMenuItems, addMenuItem, updateMenuItem, deleteMenuItem } from '../../services/adminApi';
-import { categoryMap } from '../../services/menuApi';
+import { fetchAllMenuItems, addMenuItem, updateMenuItem, deleteMenuItem, fetchAllCategories } from '../../services/adminApi';
 import { Plus, Edit2, Trash2, X } from 'lucide-react';
 
 export const AdminMenu = () => {
@@ -14,6 +13,8 @@ export const AdminMenu = () => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
+
   const [formData, setFormData] = useState({
     item_name: '',
     price: '',
@@ -25,8 +26,19 @@ export const AdminMenu = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const data = await fetchAllMenuItems();
-      setItems(data.menu_items || []);
+      const [itemsData, catsData] = await Promise.all([
+        fetchAllMenuItems(),
+        fetchAllCategories()
+      ]);
+      setItems(itemsData.menu_items || []);
+      
+      const newCategoryMap: Record<number, string> = {};
+      if (catsData && catsData.categories) {
+        catsData.categories.forEach((c: any) => {
+          newCategoryMap[c.category_id] = c.category_name;
+        });
+      }
+      setCategoryMap(newCategoryMap);
     } catch (err) {
       console.error(err);
     } finally {

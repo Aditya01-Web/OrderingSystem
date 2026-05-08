@@ -33,19 +33,11 @@
 //   return data;
 // };
 
-const API_BASE = '/api';
+const API_BASE = 'https://orderingsystembackend-qnev.onrender.com/api';
 
 // ============================================
 // CREDENTIALS — move to .env in production
 // ============================================
-export const categoryMap: Record<number, string> = {
-  1: 'Coffee',
-  2: 'Tea',
-  3: 'Pizza',
-  4: 'Burger',
-  5: 'Desserts',
-  6: 'Salads',
-};
 
 const AUTH_USERNAME = 'piyush';
 const AUTH_PASSWORD = 'Piyush59@';

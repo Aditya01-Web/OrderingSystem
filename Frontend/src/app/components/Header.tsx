@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { ScrollArea } from './ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { fetchMenuByTable, categoryMap } from '../services/menuApi';
+import { fetchMenuByTable, fetchCategoriesByTable } from '../services/menuApi';
 import { FoodItem } from '../context/CartContext';
 
 export const Header = () => {
@@ -26,14 +26,25 @@ export const Header = () => {
   useEffect(() => {
     const loadMenu = async () => {
       try {
-        const data = await fetchMenuByTable(currentTableId);
-        const mapped: FoodItem[] = data.menu_items
+        const [itemsData, catsData] = await Promise.all([
+          fetchMenuByTable(currentTableId),
+          fetchCategoriesByTable(currentTableId)
+        ]);
+
+        const newCategoryMap: Record<number, string> = {};
+        if (catsData && catsData.categories) {
+          catsData.categories.forEach((c: any) => {
+            newCategoryMap[c.category_id] = c.category_name;
+          });
+        }
+
+        const mapped: FoodItem[] = itemsData.menu_items
           .filter((item: any) => item.availability)
           .map((item: any) => ({
             id: `api-${item.item_id}`,
             name: item.item_name,
             price: parseFloat(item.price),
-            category: categoryMap[item.category_id] ?? 'Other',
+            category: newCategoryMap[item.category_id] ?? 'Other',
             image: item.image_url || '',
             description: '',
           }));

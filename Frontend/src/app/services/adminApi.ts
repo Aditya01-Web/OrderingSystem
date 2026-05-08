@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = 'https://orderingsystembackend-qnev.onrender.com/api';
 
 let adminToken: string | null = null;
 
@@ -41,6 +41,18 @@ export const fetchAllMenuItems = async () => {
     },
   });
   if (!response.ok) throw new Error('Failed to fetch menu');
+  return response.json();
+};
+
+export const fetchAllCategories = async () => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/menu/categories/1/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) throw new Error('Failed to fetch categories');
   return response.json();
 };
 
