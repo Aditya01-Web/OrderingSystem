@@ -160,3 +160,25 @@ export const deleteTable = async (tableId: number | string) => {
     return { success: true };
   }
 };
+
+export const fetchDashboardData = async () => {
+  const token = getAdminToken();
+  const response = await fetch(`${API_BASE}/dashboard/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) throw new Error('Failed to fetch dashboard data');
+  return response.json();
+};
+
+export const trackOrder = async (orderId: string | number) => {
+  const response = await fetch(`${API_BASE}/order/${orderId}/track/`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) throw new Error('Failed to track order');
+  return response.json();
+};

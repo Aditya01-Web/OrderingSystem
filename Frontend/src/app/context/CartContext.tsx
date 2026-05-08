@@ -152,10 +152,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setOrders((prev) => [newOrder, ...prev]);
       clearCart();
 
-      // Simulate progression locally until a real status endpoint is used
-      setTimeout(() => updateOrderStatus(newOrderId, 'preparing'), 2000);
-      setTimeout(() => updateOrderStatus(newOrderId, 'ready'), 5000);
-
       return newOrderId;
     } catch (error) {
       console.error('Error placing order:', error);

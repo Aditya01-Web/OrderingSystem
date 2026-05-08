@@ -1,24 +1,59 @@
+import { useEffect } from 'react';
 import { Package, CheckCircle, Clock, ChefHat } from 'lucide-react';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { trackOrder } from '../services/adminApi';
 import { Progress } from '../components/ui/progress';
 
 export const OrderTrackingPage = () => {
-  const { orders } = useCart();
+  const { orders, updateOrderStatus } = useCart();
 
   const activeOrders = orders.filter((order) => order.status !== 'completed');
   const recentOrders = activeOrders.length > 0 ? activeOrders : orders.slice(0, 3);
 
+  useEffect(() => {
+    if (activeOrders.length === 0) return;
+
+    const fetchStatuses = async () => {
+      for (const order of activeOrders) {
+        try {
+          const data = await trackOrder(order.id);
+          // Map backend status to frontend status
+          let newStatus: any = 'pending';
+          if (data.status === 'Placed') newStatus = 'pending';
+          if (data.status === 'Preparing') newStatus = 'preparing';
+          if (data.status === 'Ready') newStatus = 'ready';
+          if (data.status === 'Completed') newStatus = 'completed';
+          
+          if (order.status !== newStatus) {
+            updateOrderStatus(order.id, newStatus);
+          }
+        } catch (err) {
+          console.error(`Failed to track order ${order.id}:`, err);
+        }
+      }
+    };
+
+    fetchStatuses();
+    const interval = setInterval(fetchStatuses, 10000); // Poll every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [activeOrders, updateOrderStatus]);
+
   const getStatusInfo = (status: string) => {
     switch (status) {
       case 'pending':
+      case 'Placed':
         return { label: 'Order Received', icon: Clock, progress: 25, bg: '#DBEAFE', color: '#1D4ED8' };
       case 'preparing':
+      case 'Preparing':
         return { label: 'Preparing', icon: ChefHat, progress: 60, bg: '#FEF3C7', color: '#B45309' };
       case 'ready':
+      case 'Ready':
         return { label: 'Ready for Pickup', icon: Package, progress: 90, bg: '#D6E9D0', color: '#3A6B35' };
       case 'completed':
+      case 'Completed':
         return { label: 'Completed', icon: CheckCircle, progress: 100, bg: '#E8F0E5', color: '#3A6B35' };
       default:
         return { label: 'Unknown', icon: Clock, progress: 0, bg: '#EDE8E0', color: '#6B7F68' };
