@@ -12,14 +12,16 @@ const COLORS = ['#3A6B35', '#7EB67A', '#C8BAA8', '#D4CCC0', '#E8E2D9'];
 export const AdminDashboard = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
       try {
         const response = await fetchDashboardData();
         setData(response);
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
+        setError(err.message || 'Failed to load dashboard data');
       } finally {
         setLoading(false);
       }
@@ -37,7 +39,16 @@ export const AdminDashboard = () => {
     );
   }
 
-  if (!data) return null;
+  if (error || !data) {
+    return (
+      <AdminLayout>
+        <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+          <div className="text-xl text-red-500 font-bold">{error || 'No dashboard data available'}</div>
+          <p className="text-sm text-gray-500">Please check your API endpoint or backend server connection.</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   const {
     basic_metrics,

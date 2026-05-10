@@ -1,4 +1,4 @@
-const API_BASE = 'https://orderingsystembackend-qnev.onrender.com/api';
+const API_BASE = '/api';
 
 let adminToken: string | null = null;
 
@@ -175,7 +175,7 @@ export const deleteTable = async (tableId: number | string) => {
 
 export const fetchDashboardData = async () => {
   const token = getAdminToken();
-  const response = await fetch(`${API_BASE}/dashboard/`, {
+  const response = await fetch(`${API_BASE}/admin/dashboard/`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

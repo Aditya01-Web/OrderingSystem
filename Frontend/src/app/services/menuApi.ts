@@ -16,7 +16,7 @@
 //   6: 'Salads',
 // };
 
-// const API_BASE = 'https://orderingsystembackend-ihdb.onrender.com/api';
+// const API_BASE = 'https://orderingsystembackend-qnev.onrender.com/api';
 
 // export const fetchMenuByTable = async (tableNumber: number = 1) => {
 //   // ✅ Fixed: was `${API_BASE}/${tableNumber}/` → produced /api//1/
@@ -33,7 +33,7 @@
 //   return data;
 // };
 
-const API_BASE = 'https://orderingsystembackend-qnev.onrender.com/api';
+const API_BASE = '/api';
 
 // ============================================
 // CREDENTIALS — move to .env in production
