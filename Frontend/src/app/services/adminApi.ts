@@ -112,7 +112,7 @@ export const addMenuItem = async (data: { item_name: string, price: string | num
 
 export const updateMenuItem = async (itemId: number | string, data: any) => {
   const token = getAdminToken();
-  const response = await fetch(`${API_BASE}/menu/items/${itemId}/`, {
+  const response = await fetch(`${API_BASE}/menu/items/update/${itemId}/`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ export const updateMenuItem = async (itemId: number | string, data: any) => {
 
 export const deleteMenuItem = async (itemId: number | string) => {
   const token = getAdminToken();
-  const response = await fetch(`${API_BASE}/menu/items/${itemId}/`, {
+  const response = await fetch(`${API_BASE}/menu/items/delete/${itemId}/`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -158,7 +158,7 @@ export const addTable = async (data: { table_number: number, capacity: number })
 
 export const deleteTable = async (tableId: number | string) => {
   const token = getAdminToken();
-  const response = await fetch(`${API_BASE}/tables/${tableId}/`, {
+  const response = await fetch(`${API_BASE}/tables/delete/${tableId}/`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -188,6 +188,7 @@ export const fetchDashboardData = async () => {
 export const trackOrder = async (orderId: string | number) => {
   const response = await fetch(`${API_BASE}/order/${orderId}/track/`, {
     headers: {
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
