@@ -21,7 +21,7 @@ export const CheckoutPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    paymentMethod: 'credit-card',
+    paymentMethod: 'upi',
   });
 
   const total = getCartTotal();
@@ -62,9 +62,8 @@ export const CheckoutPage = () => {
   }
 
   const paymentMethods = [
-    { id: 'credit-card', label: 'Credit Card', icon: CreditCard },
-    { id: 'debit-card', label: 'Debit Card', icon: Wallet },
-    { id: 'cash', label: 'Cash on Pickup', icon: DollarSign },
+    { id: 'upi', label: 'UPI', icon: DollarSign },
+    { id: 'cash', label: 'Cash on Delivery', icon: Wallet },
   ];
 
   return (

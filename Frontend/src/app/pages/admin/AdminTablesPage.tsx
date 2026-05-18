@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { useTable } from '../../context/TableContext';
 import { Download, QrCode, Plus, Trash2, X } from 'lucide-react';
-import { addTable, deleteTable } from '../../services/adminApi';
+import { addTable, deleteTable, updateTableStatus } from '../../services/adminApi';
 
 export const AdminTablesPage = () => {
   const { tables, loadingTables, errorTables, refreshTables } = useTable();
@@ -43,6 +43,17 @@ export const AdminTablesPage = () => {
     } catch (err) {
       console.error(err);
       alert('Failed to delete table.');
+    }
+  };
+
+  const handleUpdateStatus = async (tableId: number, currentStatus: string) => {
+    const newStatus = currentStatus === 'Free' ? 'Occupied' : 'Free';
+    try {
+      await updateTableStatus(tableId, newStatus);
+      await refreshTables();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update table status.');
     }
   };
 
@@ -96,7 +107,7 @@ export const AdminTablesPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tables.map((table) => (
+            {[...tables].sort((a, b) => a.table_number - b.table_number).map((table) => (
               <div
                 key={table.table_id}
                 className="rounded-2xl border bg-white overflow-hidden flex flex-col transition-shadow hover:shadow-md"
@@ -113,16 +124,18 @@ export const AdminTablesPage = () => {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span
-                        className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                      <button
+                        onClick={() => handleUpdateStatus(table.table_id, table.status)}
+                        className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-opacity hover:opacity-80 cursor-pointer"
                         style={{
                           backgroundColor: table.status === 'Free' ? '#E8F0E5' : '#FEF2F2',
                           color: table.status === 'Free' ? '#3A6B35' : '#DC2626',
                           border: `1px solid ${table.status === 'Free' ? '#A8C9A0' : '#FECACA'}`
                         }}
+                        title={`Click to mark as ${table.status === 'Free' ? 'Occupied' : 'Free'}`}
                       >
                         {table.status}
-                      </span>
+                      </button>
                       <button
                         onClick={() => handleDeleteTable(table.table_id)}
                         className="p-2 rounded-full hover:bg-red-50 text-red-500 transition-colors"
