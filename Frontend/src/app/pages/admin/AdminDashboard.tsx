@@ -155,7 +155,7 @@ export const AdminDashboard = () => {
     rows.push(["Monthly Revenue", `INR ${data.basic_metrics.monthly_revenue}`]);
     rows.push(["Avg Order Value", `INR ${data.basic_metrics.average_order_value}`]);
     rows.push(["Orders Today", data.basic_metrics.total_orders_today]);
-    rows.push(["Total Items Sold", data.basic_metrics.total_items_sold || 0]);
+    rows.push(["Total Items Sold", data.basic_metrics.total_items_sold]);
     rows.push([]);
 
     // Section 2: Order Status Breakdown
@@ -227,7 +227,7 @@ export const AdminDashboard = () => {
     { label: 'Monthly Revenue', value: `₹${basic_metrics.monthly_revenue}`, icon: TrendingUp, color: '#16a34a', bg: '#dcfce7' },
     { label: 'Avg Order Value', value: `₹${basic_metrics.average_order_value}`, icon: UtensilsCrossed, color: '#B45309', bg: '#FEF3C7' },
     { label: 'Orders Today', value: basic_metrics.total_orders_today, icon: CheckCircle, color: '#1D4ED8', bg: '#DBEAFE' },
-    { label: 'Total Items Sold', value: basic_metrics.total_items_sold || 0, icon: ShoppingBag, color: '#9333EA', bg: '#F3E8FF' },
+    { label: 'Total Items Sold', value: basic_metrics.total_items_sold, icon: ShoppingBag, color: '#9333EA', bg: '#F3E8FF' },
   ];
 
   const pieData = Object.keys(order_status_breakdown).map((key) => ({
