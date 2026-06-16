@@ -21,7 +21,7 @@ export const CheckoutPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    paymentMethod: 'upi',
+    paymentMethod: 'cash',
   });
 
   const total = getCartTotal();
