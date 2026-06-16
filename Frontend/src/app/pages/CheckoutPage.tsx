@@ -9,7 +9,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Separator } from '../components/ui/separator';
-import { CreditCard, Wallet, DollarSign } from 'lucide-react';
+import { CreditCard, Wallet, IndianRupee } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CheckoutPage = () => {
