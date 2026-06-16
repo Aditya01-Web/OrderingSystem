@@ -173,9 +173,23 @@ export const deleteTable = async (tableId: number | string) => {
   }
 };
 
-export const fetchDashboardData = async () => {
+export const fetchDashboardData = async (params?: { period?: string; from_date?: string; to_date?: string }) => {
   const token = getAdminToken();
-  const response = await fetch(`${API_BASE}/admin/dashboard/`, {
+  let url = `${API_BASE}/admin/dashboard/`;
+  if (params) {
+    const query = new URLSearchParams();
+    if (params.from_date && params.to_date) {
+      query.append('from_date', params.from_date);
+      query.append('to_date', params.to_date);
+    } else if (params.period) {
+      query.append('period', params.period);
+    }
+    const queryString = query.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+  }
+  const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
