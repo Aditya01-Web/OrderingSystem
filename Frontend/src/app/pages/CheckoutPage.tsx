@@ -63,7 +63,7 @@ export const CheckoutPage = () => {
 
   const paymentMethods = [
     { id: 'upi', label: 'UPI', icon: IndianRupee },
-    { id: 'cash', label: 'Cash on Delivery', icon: Wallet },
+    { id: 'cash', label: 'Cash', icon: Wallet },
   ];
 
   return (
